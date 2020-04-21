@@ -7,7 +7,7 @@ process.env.NODE_ENV = "development";
 module.exports = {
   mode: "development",
   target: "web", // could also be set to 'node' for Node app
-  devTool: "cheap-module-source-map",
+  devtool: "cheap-module-source-map",
   entry: "./src/index",
   output: {
     path: path.resolve(__dirname, "build"),
