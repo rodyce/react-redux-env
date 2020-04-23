@@ -39,9 +39,9 @@ class CoursesPage extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    // dispatch was automatically added since we did not specify
-    // mapDispatchToProps previously when we called connect.
-    this.props.dispatch(courseActions.createCourse(this.state.course));
+    // No need to call this.props.dispatch since that's now being handled with
+    // mapDispatchToProps now.
+    this.props.createCourse(this.state.course);
   };
 
   render() {
@@ -55,6 +55,9 @@ class CoursesPage extends React.Component {
           value={this.state.course.title}
         />
         <input type="submit" value="Save" />
+        {this.props.courses.map((course) => (
+          <div key={course.title}>{course.title}</div>
+        ))}
       </form>
     );
   }
@@ -62,7 +65,8 @@ class CoursesPage extends React.Component {
 
 // Adding this prop type avoid ES Lint to give a warning for props.dispatch
 CoursesPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  courses: PropTypes.array.isRequired,
+  createCourse: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -72,9 +76,14 @@ function mapStateToProps(state) {
   };
 }
 
-// mapDispatchToProps: actions we want to expose in our component.
+function mapDispatchToProps(dispatch) {
+  // Always call dispatch below!
+  return {
+    createCourse: (course) => dispatch(courseActions.createCourse(course)),
+  };
+} //actions we want to expose in our component.
 
 // Export container component connect...
 // 'dispatch' property injected automatically, since we did not specify
 // the mapDispatchToProps function as second argument.
-export default connect(mapStateToProps)(CoursesPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CoursesPage);
