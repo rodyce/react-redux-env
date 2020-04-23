@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import * as courseActions from "../../redux/actions/courseActions";
 import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
 
 class CoursesPage extends React.Component {
   // constructor(props) {
@@ -41,7 +42,7 @@ class CoursesPage extends React.Component {
     event.preventDefault();
     // No need to call this.props.dispatch since that's now being handled with
     // mapDispatchToProps now.
-    this.props.createCourse(this.state.course);
+    this.props.actions.createCourse(this.state.course);
   };
 
   render() {
@@ -66,7 +67,7 @@ class CoursesPage extends React.Component {
 // Adding this prop type avoid ES Lint to give a warning for props.dispatch
 CoursesPage.propTypes = {
   courses: PropTypes.array.isRequired,
-  createCourse: PropTypes.func.isRequired,
+  actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -79,7 +80,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   // Always call dispatch below!
   return {
-    createCourse: (course) => dispatch(courseActions.createCourse(course)),
+    actions: bindActionCreators(courseActions, dispatch),
   };
 } //actions we want to expose in our component.
 
