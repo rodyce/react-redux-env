@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as courseActions from "../../redux/actions/courseActions";
+import * as authorActions from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
@@ -21,9 +22,18 @@ class CoursesPage extends React.Component {
   // }
 
   componentDidMount() {
-    this.props.actions
-      .loadCourses()
-      .catch((error) => alert("Loading courses failed: " + error));
+    const { courses, authors, actions } = this.props;
+    if (courses.length === 0) {
+      // Only load courses when list is empty.
+      actions
+        .loadCourses()
+        .catch((error) => alert("Loading courses failed: " + error));
+    }
+    if (authors.length === 0) {
+      actions
+        .loadAuthors()
+        .catch((error) => alert("Loading authors failed: " + error));
+    }
   }
 
   render() {
@@ -38,21 +48,37 @@ class CoursesPage extends React.Component {
 
 // Adding this prop type avoid ES Lint to give a warning for props.dispatch
 CoursesPage.propTypes = {
+  authors: PropTypes.array.isRequired,
   courses: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
   // Expose only what is necessary to avoid unneeded re-renders.
+  // Add the author's name to each course.
   return {
-    courses: state.courses,
+    courses:
+      state.authors.length === 0
+        ? []
+        : state.courses.map((course) => {
+            return {
+              ...course,
+              authorName: state.authors.find((a) => a.id === course.authorId)
+                .name,
+            };
+          }),
+    authors: state.authors,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   // Always call dispatch below!
   return {
-    actions: bindActionCreators(courseActions, dispatch),
+    actions: {
+      // We can pass a single action creator to bindActionCreators
+      loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
+      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
+    },
   };
 } //actions we want to expose in our component.
 
