@@ -1,6 +1,7 @@
 import * as types from "../actions/actionTypes";
+import initialState from "./initialState";
 
-export default function courseReducer(state = [], action) {
+export default function courseReducer(state = initialState.courses, action) {
   // Note. It would be better to store courses by ID in a map...
   // For faster lookups.
   switch (action.type) {
