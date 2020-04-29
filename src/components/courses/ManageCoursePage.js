@@ -12,6 +12,7 @@ function ManageCoursePage({
   loadAuthors,
   loadCourses,
   saveCourse, // call saveCourse in our component will call function bound to dispatch in mapDispatchToProps
+  history,
   ...props
 }) {
   // Avoid using Redux for all state. Use plain React state for data
@@ -45,7 +46,13 @@ function ManageCoursePage({
 
   function handleSave(event) {
     event.preventDefault();
-    saveCourse(course); // This is passed in on props, so it is already bound to dispatch
+    // This saveCourse function here is passed in on props,
+    // so it is already bound to dispatch
+    saveCourse(course).then(() => {
+      // We can use <Redirect> or history to redirect.
+      // Note that 'history' is being passed on props. React Router adds it.
+      history.push("/courses");
+    });
   }
 
   return (
@@ -67,6 +74,7 @@ ManageCoursePage.propTypes = {
   loadAuthors: PropTypes.func.isRequired,
   loadCourses: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
