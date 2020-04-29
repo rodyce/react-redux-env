@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadCourses } from "../../redux/actions/courseActions";
+import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
@@ -11,6 +11,7 @@ function ManageCoursePage({
   authors,
   loadAuthors,
   loadCourses,
+  saveCourse, // call saveCourse in our component will call function bound to dispatch in mapDispatchToProps
   ...props
 }) {
   // Avoid using Redux for all state. Use plain React state for data
@@ -42,12 +43,18 @@ function ManageCoursePage({
     }));
   }
 
+  function handleSave(event) {
+    event.preventDefault();
+    saveCourse(course); // This is passed in on props, so it is already bound to dispatch
+  }
+
   return (
     <CourseForm
       course={course}
       errors={errors}
       authors={authors}
       onChange={handleChange}
+      onSave={handleSave}
     />
   );
 }
@@ -59,6 +66,7 @@ ManageCoursePage.propTypes = {
   courses: PropTypes.array.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   loadCourses: PropTypes.func.isRequired,
+  saveCourse: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -74,6 +82,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   loadCourses,
   loadAuthors,
+  saveCourse,
 };
 
 // Export container component connect...
