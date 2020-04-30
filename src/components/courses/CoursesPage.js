@@ -7,6 +7,7 @@ import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
 import { Redirect } from "react-router-dom";
 import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 class CoursesPage extends React.Component {
   state = {
@@ -28,6 +29,14 @@ class CoursesPage extends React.Component {
     }
   }
 
+  handleDeleteCourse = (course) => {
+    // Immediately tell the user course has been deleted...
+    toast.success("Course deleted");
+    this.props.actions.deleteCourse(course).catch((error) => {
+      toast.error("Delete failed. " + error.message, { autoClose: false });
+    });
+  };
+
   render() {
     return (
       <>
@@ -44,7 +53,10 @@ class CoursesPage extends React.Component {
             >
               Add Course
             </button>
-            <CourseList courses={this.props.courses} />
+            <CourseList
+              onDeleteClick={this.handleDeleteCourse}
+              courses={this.props.courses}
+            />
           </>
         )}
       </>
@@ -86,6 +98,7 @@ function mapDispatchToProps(dispatch) {
       // We can pass a single action creator to bindActionCreators
       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
       loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
+      deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch),
     },
   };
 } //actions we want to expose in our component.
