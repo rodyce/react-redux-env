@@ -24,11 +24,14 @@ function ManageCoursePage({
     if (courses.length === 0) {
       // Only load courses when list is empty.
       loadCourses().catch((error) => alert("Loading courses failed: " + error));
+    } else {
+      setCourse({ ...props.course });
     }
+
     if (authors.length === 0) {
       loadAuthors().catch((error) => alert("Loading authors failed: " + error));
     }
-  }, []); // Note empty array here as a second argument.
+  }, [props.course]); // Note empty array here as a second argument.
   // Effect will run once when the component mounts
 
   function handleChange(event) {
@@ -77,11 +80,33 @@ ManageCoursePage.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-function mapStateToProps(state) {
+// This function is a "selector". It selects data from the Redux store.
+export function getCourseBySlug(courses, slug) {
+  // Note we can memoize using reselect lib for performance.
+  return courses.find((course) => course.slug === slug) || null;
+}
+
+function mapStateToProps(state, ownProps) {
+  // ownProps lets us acccess the component's props. We can use
+  // this to read the URL data injected by React Router.
   // Expose only what is necessary to avoid unneeded re-renders.
   // Add the author's name to each course.
+  // For course, we need to determine if the user is adding a new
+  // course or editing an existing one.
+
+  // The slug comes from the Route path "/course/:slug"
+  const slug = ownProps.match.params.slug;
+
+  // This function, mapStateToProps, will get invoked every time the
+  // Redux store changes. Once there are courses in the state this will
+  // evaluate state.courses.length > 0 to be true.
+  const course =
+    slug && state.courses.length > 0
+      ? getCourseBySlug(state.courses, slug)
+      : newCourse;
+
   return {
-    course: newCourse,
+    course,
     courses: state.courses,
     authors: state.authors,
   };
