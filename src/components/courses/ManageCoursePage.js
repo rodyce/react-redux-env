@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
 import { newCourse } from "../../../tools/mockData";
 import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 function ManageCoursePage({
   courses,
@@ -60,6 +61,7 @@ function ManageCoursePage({
     // This saveCourse function here is passed in on props,
     // so it is already bound to dispatch
     saveCourse(course).then(() => {
+      toast.success("Course saved.");
       // We can use <Redirect> or history to redirect.
       // Note that 'history' is being passed on props. React Router adds it.
       history.push("/courses");
