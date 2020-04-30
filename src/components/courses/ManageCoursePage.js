@@ -20,6 +20,7 @@ function ManageCoursePage({
   // only one few components use. (such as form state)
   const [course, setCourse] = useState({ ...props.course });
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (courses.length === 0) {
@@ -39,6 +40,7 @@ function ManageCoursePage({
     // This destructure avoids the event getting garbage collected
     // so that it is available within the nested setCourse callback.
     const { name, value } = event.target;
+
     // Use functional form of setState so I can safely set new state that
     // is based on the existing state.
     // Use computed property syntax. Ref property via variable.
@@ -50,6 +52,11 @@ function ManageCoursePage({
 
   function handleSave(event) {
     event.preventDefault();
+
+    // No need to set it back to false since we're going to redirect
+    // to another page.
+    setSaving(true);
+
     // This saveCourse function here is passed in on props,
     // so it is already bound to dispatch
     saveCourse(course).then(() => {
@@ -68,6 +75,7 @@ function ManageCoursePage({
       authors={authors}
       onChange={handleChange}
       onSave={handleSave}
+      saving={saving}
     />
   );
 }
