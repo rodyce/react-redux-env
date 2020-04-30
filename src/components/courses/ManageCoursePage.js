@@ -60,12 +60,19 @@ function ManageCoursePage({
 
     // This saveCourse function here is passed in on props,
     // so it is already bound to dispatch
-    saveCourse(course).then(() => {
-      toast.success("Course saved.");
-      // We can use <Redirect> or history to redirect.
-      // Note that 'history' is being passed on props. React Router adds it.
-      history.push("/courses");
-    });
+    saveCourse(course)
+      .then(() => {
+        toast.success("Course saved.");
+        // We can use <Redirect> or history to redirect.
+        // Note that 'history' is being passed on props. React Router adds it.
+        history.push("/courses");
+      })
+      .catch((error) => {
+        // User can try submitting the form again after error occurs.
+        setSaving(false);
+        // This onSave property is checked in CourseForm.
+        setErrors({ onSave: error.message });
+      });
   }
 
   return authors.length === 0 || courses.length === 0 ? (
